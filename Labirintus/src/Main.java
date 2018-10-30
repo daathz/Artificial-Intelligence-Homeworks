@@ -6,7 +6,6 @@ public class Main {
     static int numberOfItems;
     static int numberOfRows;
     static int numberOfColumns;
-    static Coordinate actualCoordinate;
     static Node[][] graph;
 
 
@@ -33,7 +32,6 @@ public class Main {
                 maze[i][j] = Integer.parseInt(stemp[j]);
             }
         }
-        actualCoordinate = new Coordinate(0, 0);
     }
 
     public static void makeGraph() {
@@ -43,42 +41,33 @@ public class Main {
                 graph[i][j] = new Node(new Coordinate(i, j), maze[i][j]);
             }
         }
-        //TODO Add adjacencies
+        for (int i = 0; i < numberOfRows; ++i) {
+            for (int j = 0; j < numberOfColumns; ++j) {
+                if (!graph[i][j].westWall && j > 0) {
+                    graph[i][j].adjacentNodes.add(graph[i][j - 1]);
+                }
+                if (!graph[i][j].northWall && i > 0) {
+                    graph[i][j].adjacentNodes.add(graph[i - 1][j]);
+                }
+                if (!graph[i][j].eastWall && j < numberOfColumns - 1) {
+                    graph[i][j].adjacentNodes.add(graph[i][j + 1]);
+                }
+                if (!graph[i][j].southWall && i < numberOfRows - 1) {
+                    graph[i][j].adjacentNodes.add(graph[i + 1][j]);
+                }
+            }
+        }
     }
 
-//    public static void oneStep() {
-//        // Basic (shit) algorithm
-//        int value = maze[actualRow][actualColumn];
-//        boolean isItem = (value & 16) != 0;
-//        boolean cantGoNorth = (value & 1) != 0;
-//        boolean cantGoEast = (value & 2) != 0;
-//        boolean cantGoSouth = (value & 4) != 0;
-//        boolean cantGoWest = (value & 8) != 0;
-//
-//        if (isItem) {
-//            System.out.println("felvesz");
-//        }
-//
-//        if (!cantGoEast && actualColumn + 1 < numberOfColumns) {
-//            actualColumn++;
-//            System.out.println(actualRow + " " + actualColumn);
-//        }
-//        else if (!cantGoSouth && actualRow + 1 < numberOfRows) {
-//            actualRow++;
-//            System.out.println(actualRow + " " + actualColumn);
-//        }
-//        else if (!cantGoWest && actualColumn > 0) {
-//            actualColumn--;
-//            System.out.println(actualRow + " " + actualColumn);
-//        }
-//        else if (!cantGoNorth && actualRow > 0) {
-//            actualRow--;
-//            System.out.println(actualRow + " " + actualColumn);
-//        }
-//    }
+    public static void BFS() {
+        int actualRow = 0;
+        int actualColumn = 0;
+        //TODO implement algorithm
+    }
 
     public static void main(String[] args) {
         readLabyrinth();
+        makeGraph();
     }
 }
 
@@ -91,4 +80,3 @@ class Coordinate {
         column = c;
     }
 }
-

@@ -33,8 +33,4 @@ public class Node {
             westWall = true;
         }
     }
-
-    public Coordinate getCoordinate() {
-        return coordinate;
-    }
 }
