@@ -6,11 +6,11 @@ public class Main {
     static int numberOfItems;
     static int numberOfRows;
     static int numberOfColumns;
-    static Coordinates actualCoordinates;
-    static ArrayList<Coordinates> items = new ArrayList<>();
+    static Coordinate actualCoordinate;
+    static Node[][] graph;
 
 
-    public static void read_labyrinth() {
+    public static void readLabyrinth() {
         Scanner scanner = new Scanner(System.in);
         ArrayList<String> temp = new ArrayList<>();
         while (true) {
@@ -33,7 +33,17 @@ public class Main {
                 maze[i][j] = Integer.parseInt(stemp[j]);
             }
         }
-        actualCoordinates = new Coordinates(0, 0);
+        actualCoordinate = new Coordinate(0, 0);
+    }
+
+    public static void makeGraph() {
+        graph = new Node[numberOfRows][numberOfColumns];
+        for (int i = 0; i < numberOfRows; ++i) {
+            for (int j = 0; j < numberOfColumns; ++j) {
+                graph[i][j] = new Node(new Coordinate(i, j), maze[i][j]);
+            }
+        }
+        //TODO Add adjacencies
     }
 
 //    public static void oneStep() {
@@ -67,32 +77,18 @@ public class Main {
 //        }
 //    }
 
-    public static void findItems() {
-        for (int k = 0; k < numberOfItems; ++k) {
-            for (int i = 0; i < numberOfRows; ++i) {
-                for (int j = 0; j < numberOfColumns; ++j) {
-                    if ((maze[i][j] & 16) != 0) {
-                        items.add(new Coordinates(i, j));
-                    }
-                }
-            }
-        }
-    }
-
-    public static void findPath(int startRow, int startColumn, int endRow, int endColumn) {}
-
     public static void main(String[] args) {
-        read_labyrinth();
-        findItems();
+        readLabyrinth();
     }
 }
 
-class Coordinates {
+class Coordinate {
     public int row;
     public int column;
 
-    public Coordinates(int r, int c) {
+    public Coordinate(int r, int c) {
         row = r;
         column = c;
     }
 }
+
