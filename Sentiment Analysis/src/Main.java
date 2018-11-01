@@ -7,6 +7,8 @@ public class Main {
     static ArrayList<int[]> inputData = new ArrayList<>();
     static int[] inputLabels = new int[80000];
     static ArrayList<int[]> targetData = new ArrayList<>();
+    static int zeroWords = 0;
+    static int oneWords = 0;
 
     public static void readInput() {
         Scanner scanner = new Scanner(System.in);
@@ -48,82 +50,64 @@ public class Main {
         }
     }
 
-    public static HashMap<Integer, ArrayList<Integer>> makeInitialVocabulary() {
-        HashMap<Integer, ArrayList<Integer>> vocabulary = new HashMap<>();
+    public static HashMap<Integer, Double[]> makeVocabulary() {
+        HashMap<Integer, Integer[]> vocabWithFreqs = new HashMap<>();
+        HashMap<Integer, ArrayList<Integer>> vocabWithList = new HashMap<>();
+        HashMap<Integer, Double[]>  vocabWithProbs = new HashMap<>();
         for (int i = 0; i < 80000; ++i) {
             try {
                 for (int j = 0; j < inputData.get(i).length; ++j) {
-                    if (!vocabulary.containsKey(inputData.get(i)[j])) {
+                    if (!vocabWithList.containsKey(inputData.get(i)[j])) {
                         ArrayList<Integer> values = new ArrayList<>();
                         values.add(inputLabels[i]);
-                        vocabulary.put(inputData.get(i)[j], values);
+                        vocabWithList.put(inputData.get(i)[j], values);
                     } else {
-                        ArrayList<Integer> values = vocabulary.get(inputData.get(i)[j]);
+                        ArrayList<Integer> values = vocabWithList.get(inputData.get(i)[j]);
                         values.add(inputLabels[i]);
-                        vocabulary.replace(inputData.get(i)[j], values);
+                        vocabWithList.replace(inputData.get(i)[j], values);
                     }
                 }
             } catch (NullPointerException e) {
             }
         }
 
-        return vocabulary;
-    }
-
-    public static HashMap<Integer, Double> makeZeroVocabulary(HashMap<Integer, ArrayList<Integer>> initial) {
-        HashMap<Integer, Double> vocabulary = new HashMap<>();
-        for (int key : initial.keySet()) {
-            ArrayList<Integer> list = initial.get(key);
-            int counter = 0;
-            for (int labels : list) {
-                if (labels == 0) {
-                    counter++;
+        for (int word : vocabWithList.keySet()) {
+            int counterZero = 0;
+            int counterOne = 0;
+            ArrayList<Integer> list = vocabWithList.get(word);
+            for (int label : list) {
+                if (label == 1) {
+                    counterOne++;
+                    oneWords++;
+                } else {
+                    counterZero++;
+                    zeroWords++;
                 }
             }
-            double result = counter / (double) list.size();
-            vocabulary.put(key, result);
+            Integer[] freq = {counterZero, counterOne};
+            vocabWithFreqs.put(word, freq);
         }
-
-        return vocabulary;
+        for (int word: vocabWithFreqs.keySet()) {
+            double probOfZero = (vocabWithFreqs.get(word)[0] + 1) / (zeroWords + vocabWithFreqs.size() + 0.0);
+            double probOfOne = (vocabWithFreqs.get(word)[1] + 1) / (oneWords + vocabWithFreqs.size() + 0.0);
+            Double[] probs = {probOfZero, probOfOne};
+            vocabWithProbs.put(word, probs);
+        }
+        return vocabWithProbs;
     }
 
-    public static HashMap<Integer, Double> makeOneVocabulary(HashMap<Integer, ArrayList<Integer>> initial) {
-        HashMap<Integer, Double> vocabulary = new HashMap<>();
-        for (int key : initial.keySet()) {
-            ArrayList<Integer> list = initial.get(key);
-            int counter = 1;
-            for (int labels : list) {
-                if (labels == 0) {
-                    counter++;
-                }
-            }
-            double result = counter / (double) list.size();
-            vocabulary.put(key, result);
-        }
-
-        return vocabulary;
-    }
-
-    public static void printResult(HashMap<Integer, Double> zeros, HashMap<Integer, Double> ones) {
-        for (int[] message : targetData) {
+    public static void predictLabel(HashMap<Integer, Double[]> vocabulary) {
+        for (int[] message: targetData) {
+            double probOfZero = 1;
+            double probOfOne = 1;
             if (message == null) {
-                System.out.println(0);
+                System.out.println(1);
                 continue;
             }
-            int zeroWords = 0;
-            int oneWords = 0;
             for (int word : message) {
-                if (zeros.get(word) == null) {
-                    zeroWords++;
-                    oneWords++;
-                } else if (zeros.get(word) > ones.get(word)) {
-                    zeroWords++;
-                } else {
-                    oneWords++;
-                }
+                probOfZero *= vocabulary.get(word)[0];
+                probOfOne *= vocabulary.get(word)[1];
             }
-            double probOfZero = Math.log(zeroWords / (message.length + 0.0));
-            double probOfOne = Math.log(oneWords / (message.length + 0.0));
             if (probOfZero > probOfOne) {
                 System.out.println(0);
             } else {
@@ -140,9 +124,7 @@ public class Main {
 
     public static void main(String[] args) {
         readInput();
-        HashMap<Integer, ArrayList<Integer>> initialVocabulary = makeInitialVocabulary();
-        HashMap<Integer, Double> zeroVocabulary = makeZeroVocabulary(initialVocabulary);
-        HashMap<Integer, Double> oneVocabulary = makeOneVocabulary(initialVocabulary);
-        printResult(zeroVocabulary, oneVocabulary);
+        HashMap<Integer, Double[]> vocabulary = makeVocabulary();
+        predictLabel(vocabulary);
     }
 }
