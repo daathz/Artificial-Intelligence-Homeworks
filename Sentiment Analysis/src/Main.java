@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class Main {
@@ -106,22 +105,29 @@ public class Main {
     }
 
     public static void printResult(HashMap<Integer, Double> zeros, HashMap<Integer, Double> ones) {
-        for (int i = 0; i < 20000; ++i) {
-            double zeroProbability = 0.5;
-            double oneProbability = 0.5;
-            int[] document = targetData.get(i);
-            try {
-                for (int j = 0; j < document.length; ++j) {
-                    zeroProbability *= zeros.get(document[j]);
-                    oneProbability *= ones.get(document[j]);
-                }
-                if (zeroProbability > oneProbability) {
-                    System.out.println(0);
-                } else {
-                    System.out.println(1);
-                }
-            } catch (NullPointerException e) {
+        for (int[] message : targetData) {
+            if (message == null) {
                 System.out.println(0);
+                continue;
+            }
+            int zeroWords = 0;
+            int oneWords = 0;
+            for (int word : message) {
+                if (zeros.get(word) == null) {
+                    zeroWords++;
+                    oneWords++;
+                } else if (zeros.get(word) > ones.get(word)) {
+                    zeroWords++;
+                } else {
+                    oneWords++;
+                }
+            }
+            double probOfZero = Math.log(zeroWords / (message.length + 0.0));
+            double probOfOne = Math.log(oneWords / (message.length + 0.0));
+            if (probOfZero > probOfOne) {
+                System.out.println(0);
+            } else {
+                System.out.println(1);
             }
         }
     }
