@@ -105,8 +105,11 @@ public class Main {
                 continue;
             }
             for (int word : message) {
-                probOfZero *= vocabulary.get(word)[0];
-                probOfOne *= vocabulary.get(word)[1];
+                if (vocabulary.get(word) != null) {
+                    probOfZero *= vocabulary.get(word)[0];
+                    probOfOne *= vocabulary.get(word)[1];
+                }
+
             }
             if (probOfZero > probOfOne) {
                 System.out.println(0);
