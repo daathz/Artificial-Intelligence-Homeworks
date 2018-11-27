@@ -2,17 +2,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class NeuralNetwork {
-    private static int numberOfNeuronInInputLayer;
-    private static int numberOfNeuronsInHiddenLayer;
+    private static int numberOfLayers;
 
     private static ArrayList<Double> inputWeights = new ArrayList<>();
     private static ArrayList<Double> hiddenWeights = new ArrayList<>();
 
-    public NeuralNetwork(int noNiIL, int noNiHL) {
-        numberOfNeuronInInputLayer = noNiIL;
-        numberOfNeuronsInHiddenLayer = noNiHL;
+    public NeuralNetwork(int numberOfLayers) {
+        this.numberOfLayers = numberOfLayers;
         Random random = new Random();
-        for (int i = 0; i < numberOfNeuronInInputLayer; ++i) {
+        for (int i = 0; i < numberOfLayers; ++i) {
             double randomValue = random.nextDouble() * 2 - 1;
             inputWeights.add(randomValue);
         }
@@ -61,12 +59,12 @@ public class NeuralNetwork {
     public void fit(double[][] input, double[] target) {
         for (int i = 0; i < input.length; ++i) {
             ArrayList<Double> inputLayerOutputs = new ArrayList<>();
-            for (int j = 0; j < numberOfNeuronInInputLayer; ++j) {
+            for (int j = 0; j < numberOfLayers; ++j) {
                 double output = Neuron(input[i], inputWeights, 1);
                 inputLayerOutputs.add(output);
             }
             ArrayList<Double> hiddenLayerOutputs = new ArrayList<>();
-            for (int k = 0; k < numberOfNeuronsInHiddenLayer; ++k) {
+            for (int k = 0; k < numberOfLayers; ++k) {
                 double output = Neuron(inputLayerOutputs, hiddenWeights, 1);
                 hiddenLayerOutputs.add(output);
             }
@@ -82,12 +80,12 @@ public class NeuralNetwork {
         ArrayList<Double> result = new ArrayList<>();
         for (double[] inputValues : input) {
             ArrayList<Double> inputLayerOutputs = new ArrayList<>();
-            for (int j = 0; j < numberOfNeuronInInputLayer; ++j) {
+            for (int j = 0; j < numberOfLayers; ++j) {
                 double output = Neuron(inputValues, inputWeights, 1);
                 inputLayerOutputs.add(output);
             }
             ArrayList<Double> hiddenLayerOutputs = new ArrayList<>();
-            for (int k = 0; k < numberOfNeuronsInHiddenLayer; ++k) {
+            for (int k = 0; k < numberOfLayers; ++k) {
                 double output = Neuron(inputLayerOutputs, hiddenWeights, 1);
                 hiddenLayerOutputs.add(output);
             }

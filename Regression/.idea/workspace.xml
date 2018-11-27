@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0c69a8b9-dd2e-4a8a-94b2-d92613a1f7e0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/NeuralNetwork.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NeuralNetwork.java" afterDir="false" />
-    </list>
+    <list default="true" id="0c69a8b9-dd2e-4a8a-94b2-d92613a1f7e0" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,8 +14,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/NeuralNetwork.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="79" lean-forward="true" selection-start-line="79" selection-end-line="79" />
+            <state relative-caret-position="1254">
+              <caret line="75" column="13" lean-forward="true" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -109,12 +107,12 @@
       <workItem from="1542884397684" duration="58000" />
       <workItem from="1542884502303" duration="4032000" />
       <workItem from="1543317901892" duration="2218000" />
-      <workItem from="1543320210140" duration="6543000" />
+      <workItem from="1543320210140" duration="6792000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14123000" />
+    <option name="totallyTimeSpent" value="14372000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -162,8 +160,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/NeuralNetwork.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="79" lean-forward="true" selection-start-line="79" selection-end-line="79" />
+        <state relative-caret-position="1254">
+          <caret line="75" column="13" lean-forward="true" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
