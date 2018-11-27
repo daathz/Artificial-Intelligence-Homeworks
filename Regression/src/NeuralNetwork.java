@@ -51,11 +51,7 @@ public class NeuralNetwork {
     }
 
     private double RMSE(double trueValue, double predictedValue) {
-        double result = trueValue - predictedValue;
-        result = Math.pow(result, 2);
-        result *= 0.5;
-        result = Math.sqrt(result);
-        return result;
+        return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
     }
 
     private static void BackPropagation() {
