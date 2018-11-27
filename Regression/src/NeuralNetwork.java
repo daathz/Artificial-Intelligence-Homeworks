@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class NeuralNetwork {
-    private static int numberOfLayers;
+    private int numberOfLayers;
 
     private static ArrayList<Double> inputWeights = new ArrayList<>();
     private static ArrayList<Double> hiddenWeights = new ArrayList<>();
@@ -72,7 +72,7 @@ public class NeuralNetwork {
             for (double value : hiddenLayerOutputs) {
                 sum += value;
             }
-
+            //TODO Backpropagation
         }
     }
 

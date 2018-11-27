@@ -29,7 +29,7 @@ public class Main {
 
     public static void main(String[] args) {
         readInput();
-        NeuralNetwork neuralNetwork = new NeuralNetwork(81, 81);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(81);
         neuralNetwork.fit(trainSet, trainValues);
         ArrayList<Double> results = neuralNetwork.predict(testSet);
         for (double result : results) {
