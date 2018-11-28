@@ -1,32 +1,25 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class NeuralNetwork {
-    private int numberOfLayers;
+class NeuralNetwork {
 
-    private static ArrayList<Double> inputWeights = new ArrayList<>();
-    private static ArrayList<Double> hiddenWeights = new ArrayList<>();
+    private static ArrayList<ArrayList<Double>> hiddenLayerWeights = new ArrayList<>();
+    private static ArrayList<Double> outputLayerWeights = new ArrayList<>();
 
-    public NeuralNetwork(int numberOfLayers) {
-        this.numberOfLayers = numberOfLayers;
+    NeuralNetwork(int numberOfNeurons) {
         Random random = new Random();
-        for (int i = 0; i < numberOfLayers; ++i) {
+        for (int i = 0; i < numberOfNeurons; ++i) {
+            ArrayList<Double> hiddenLayerWeightsPerNeuron = new ArrayList<>();
+            for (int j = 0; j < numberOfNeurons; ++j) {
+                double randomValue = random.nextDouble() * 2 - 1;
+                hiddenLayerWeightsPerNeuron.add(randomValue);
+            }
+            hiddenLayerWeights.add(hiddenLayerWeightsPerNeuron);
+        }
+        for (int k = 0; k < numberOfNeurons; ++k) {
             double randomValue = random.nextDouble() * 2 - 1;
-            inputWeights.add(randomValue);
+            outputLayerWeights.add(randomValue);
         }
-    }
-
-    private double Neuron(double[] inputs, ArrayList<Double> weights, double bias) {
-        ArrayList<Double> additive = new ArrayList<>();
-        for (int i = 0; i < inputs.length; ++i) {
-            double temp = inputs[i] * weights.get(i);
-            additive.add(temp);
-        }
-        double sum = 0;
-        for (double added : additive) {
-            sum += added;
-        }
-        return ActivationFunction(sum + bias);
     }
 
     private double Neuron(ArrayList<Double> inputs, ArrayList<Double> weights, double bias) {
@@ -48,53 +41,34 @@ public class NeuralNetwork {
         else return input;
     }
 
+    private double FeedForward(ArrayList<Double> inputs) {
+            ArrayList<Double> hiddenOutputs = new ArrayList<>();
+            for (int i = 0; i < inputs.size(); ++i) {
+                hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1));
+            }
+            return Neuron(hiddenOutputs, outputLayerWeights, 1);
+        }
+
     private double RMSE(double trueValue, double predictedValue) {
         return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
     }
 
     private static void BackPropagation() {
-
     }
 
-    public void fit(double[][] input, double[] target) {
-        for (int i = 0; i < input.length; ++i) {
-            ArrayList<Double> inputLayerOutputs = new ArrayList<>();
-            for (int j = 0; j < numberOfLayers; ++j) {
-                double output = Neuron(input[i], inputWeights, 1);
-                inputLayerOutputs.add(output);
-            }
-            ArrayList<Double> hiddenLayerOutputs = new ArrayList<>();
-            for (int k = 0; k < numberOfLayers; ++k) {
-                double output = Neuron(inputLayerOutputs, hiddenWeights, 1);
-                hiddenLayerOutputs.add(output);
-            }
-            double sum = 0;
-            for (double value : hiddenLayerOutputs) {
-                sum += value;
-            }
+    void fit(ArrayList<ArrayList<Double>> inputs, ArrayList<Double> target) {
+        for (int i = 0; i < inputs.size(); ++i) {
+            double predicted = FeedForward(inputs.get(i));
+            double rmse = RMSE(target.get(i), predicted);
             //TODO Backpropagation
         }
     }
 
-    public ArrayList<Double> predict(double[][] input) {
-        ArrayList<Double> result = new ArrayList<>();
-        for (double[] inputValues : input) {
-            ArrayList<Double> inputLayerOutputs = new ArrayList<>();
-            for (int j = 0; j < numberOfLayers; ++j) {
-                double output = Neuron(inputValues, inputWeights, 1);
-                inputLayerOutputs.add(output);
-            }
-            ArrayList<Double> hiddenLayerOutputs = new ArrayList<>();
-            for (int k = 0; k < numberOfLayers; ++k) {
-                double output = Neuron(inputLayerOutputs, hiddenWeights, 1);
-                hiddenLayerOutputs.add(output);
-            }
-            double sum = 0;
-            for (double value : hiddenLayerOutputs) {
-                sum += value;
-            }
-            result.add(sum);
+    ArrayList<Double> predict(ArrayList<ArrayList<Double>> inputs) {
+        ArrayList<Double> output = new ArrayList<>();
+        for (ArrayList<Double> input : inputs) {
+            output.add(FeedForward(input));
         }
-        return result;
+        return output;
     }
 }

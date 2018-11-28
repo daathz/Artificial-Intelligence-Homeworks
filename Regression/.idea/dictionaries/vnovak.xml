@@ -2,6 +2,7 @@
   <dictionary name="vnovak">
     <words>
       <w>backpropagation</w>
+      <w>rmse</w>
     </words>
   </dictionary>
 </component>
