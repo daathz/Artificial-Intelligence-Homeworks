@@ -49,7 +49,7 @@ class NeuralNetwork {
             return Neuron(hiddenOutputs, outputLayerWeights, 1);
         }
 
-    private double RMSE(double trueValue, double predictedValue) {
+    private double RootMeanSquaredError(double trueValue, double predictedValue) {
         return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
     }
 
@@ -59,7 +59,7 @@ class NeuralNetwork {
     void fit(ArrayList<ArrayList<Double>> inputs, ArrayList<Double> target) {
         for (int i = 0; i < inputs.size(); ++i) {
             double predicted = FeedForward(inputs.get(i));
-            double rmse = RMSE(target.get(i), predicted);
+            double rmse = RootMeanSquaredError(target.get(i), predicted);
             //TODO Backpropagation
         }
     }
