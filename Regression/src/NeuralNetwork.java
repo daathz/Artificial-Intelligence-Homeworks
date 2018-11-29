@@ -5,6 +5,8 @@ class NeuralNetwork {
 
     private static ArrayList<ArrayList<Double>> hiddenLayerWeights = new ArrayList<>();
     private static ArrayList<Double> outputLayerWeights = new ArrayList<>();
+
+    private static ArrayList<ArrayList<Double>> inputs;
     private static ArrayList<Double> hiddenOutputs;
 
     NeuralNetwork(int numberOfNeurons) {
@@ -71,7 +73,7 @@ class NeuralNetwork {
             }
             double errorSignalOfNode = (target - predicted) * predicted * sum;
             for (int l = 0; l < hiddenLayerWeights.get(j).size(); ++l) {
-                double changeInWeight = learningRate * errorSignalOfNode * ;
+                double changeInWeight = learningRate * errorSignalOfNode * inputs.get(j).get(l);
                 hiddenLayerWeights.get(j)
                         .set(l, (hiddenLayerWeights.get(j).get(l) + changeInWeight));
             }
@@ -79,6 +81,7 @@ class NeuralNetwork {
     }
 
     void fit(ArrayList<ArrayList<Double>> inputs, ArrayList<Double> target) {
+        NeuralNetwork.inputs = inputs;
         for (int i = 0; i < inputs.size(); ++i) {
             double predicted = FeedForward(inputs.get(i));
             BackPropagation(target.get(i), predicted);
