@@ -6,7 +6,7 @@ public class Main {
     static ArrayList<Double> trainValues = new ArrayList<>();
     static ArrayList<ArrayList<Double>> testSet = new ArrayList<>();
 
-    public static void readInput() {
+    private static void readInput() {
         Scanner scanner = new Scanner(System.in);
         for (int i = 0; i < 17011; ++i) {
             String temp = scanner.nextLine();

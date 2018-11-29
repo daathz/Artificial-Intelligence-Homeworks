@@ -40,17 +40,18 @@ class NeuralNetwork {
 
     //TODO Find out which Activation function to use
     private static double ActivationFunction(double input) {
-        if (input <= 0) return 0;
+        if (input <= 0) return 0.01;
         else return input;
     }
 
     private double FeedForward(ArrayList<Double> inputs) {
-            hiddenOutputs = new ArrayList<>();
-            for (int i = 0; i < inputs.size(); ++i) {
-                hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1.0));
-            }
-            return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
+        //FIXME
+        hiddenOutputs = new ArrayList<>();
+        for (int i = 0; i < inputs.size(); ++i) {
+            hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1.0));
         }
+        return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
+    }
 
     private double RootMeanSquaredError(double trueValue, double predictedValue) {
         return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
