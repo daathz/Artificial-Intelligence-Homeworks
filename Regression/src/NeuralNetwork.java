@@ -5,6 +5,7 @@ class NeuralNetwork {
 
     private static ArrayList<ArrayList<Double>> hiddenLayerWeights = new ArrayList<>();
     private static ArrayList<Double> outputLayerWeights = new ArrayList<>();
+    private static ArrayList<Double> hiddenOutputs;
 
     NeuralNetwork(int numberOfNeurons) {
         Random random = new Random();
@@ -42,25 +43,45 @@ class NeuralNetwork {
     }
 
     private double FeedForward(ArrayList<Double> inputs) {
-            ArrayList<Double> hiddenOutputs = new ArrayList<>();
+            hiddenOutputs = new ArrayList<>();
             for (int i = 0; i < inputs.size(); ++i) {
-                hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1));
+                hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1.0));
             }
-            return Neuron(hiddenOutputs, outputLayerWeights, 1);
+            return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
         }
 
     private double RootMeanSquaredError(double trueValue, double predictedValue) {
         return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
     }
 
-    private static void BackPropagation() {
+    private static void BackPropagation(double target, double predicted) {
+        double learningRate = 0.01;
+        double diffOfVals = target - predicted;
+        double errorSignal = diffOfVals * predicted * (1.0 - predicted);
+        //Output Layer
+        for (int i = 0; i < outputLayerWeights.size(); ++i) {
+            double changeInWeight = learningRate * errorSignal * hiddenOutputs.get(i);
+            outputLayerWeights.set(i, (outputLayerWeights.get(i) + changeInWeight));
+        }
+        //Hidden Layer
+        for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
+            double sum = 1.0;
+            for (int k = 0; k < outputLayerWeights.size(); ++k) {
+                sum *= (outputLayerWeights.get(k) * errorSignal);
+            }
+            double errorSignalOfNode = (target - predicted) * predicted * sum;
+            for (int l = 0; l < hiddenLayerWeights.get(j).size(); ++l) {
+                double changeInWeight = learningRate * errorSignalOfNode * ;
+                hiddenLayerWeights.get(j)
+                        .set(l, (hiddenLayerWeights.get(j).get(l) + changeInWeight));
+            }
+        }
     }
 
     void fit(ArrayList<ArrayList<Double>> inputs, ArrayList<Double> target) {
         for (int i = 0; i < inputs.size(); ++i) {
             double predicted = FeedForward(inputs.get(i));
-            double rmse = RootMeanSquaredError(target.get(i), predicted);
-            //TODO Backpropagation
+            BackPropagation(target.get(i), predicted);
         }
     }
 
