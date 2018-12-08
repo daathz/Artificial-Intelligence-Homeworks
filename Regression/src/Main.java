@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Main {
@@ -31,9 +32,26 @@ public class Main {
         }
     }
 
+    private static void normalize(ArrayList<ArrayList<Double>> inputs) {
+        for (int i = 0; i < 81; ++i) {
+            ArrayList<Double> featureList = new ArrayList<>();
+            for (ArrayList<Double> input : inputs) {
+                featureList.add(input.get(i));
+            }
+            double max = Collections.max(featureList);
+            double min = Collections.min(featureList);
+            for (ArrayList<Double> input : inputs) {
+                double result = (input.get(i) - min) / (max - min);
+                input.set(i, result);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         readInput();
         NeuralNetwork neuralNetwork = new NeuralNetwork(81);
+        normalize(trainSet);
+        normalize(testSet);
         neuralNetwork.fit(trainSet, trainValues);
         ArrayList<Double> results = neuralNetwork.predict(testSet);
         for (double result : results) {
