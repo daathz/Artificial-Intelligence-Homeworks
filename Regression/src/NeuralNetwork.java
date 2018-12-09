@@ -35,20 +35,19 @@ class NeuralNetwork {
         for (double added : additive) {
             sum += added;
         }
-        return ActivationFunction(sum + bias);
+        return sum + bias;
     }
 
-    //TODO Find out which Activation function to use
     private static double ActivationFunction(double input) {
-        if (input <= 0) return 0.01;
-        else return input;
+        //if (input <= 0) return 0.01;
+        //else return input;
+        return (1.0 / (1 + Math.exp(-input)));
     }
 
     private double FeedForward(ArrayList<Double> inputs) {
-        //FIXME
         hiddenOutputs = new ArrayList<>();
         for (int i = 0; i < inputs.size(); ++i) {
-            hiddenOutputs.add(Neuron(inputs, hiddenLayerWeights.get(i), 1.0));
+            hiddenOutputs.add(ActivationFunction(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
         }
         return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
     }
