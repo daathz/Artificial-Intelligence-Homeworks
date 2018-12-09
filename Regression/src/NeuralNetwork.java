@@ -68,9 +68,9 @@ class NeuralNetwork {
         }
         //Hidden Layer
         for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
-            double sum = 1.0;
+            double sum = 0.0;
             for (int k = 0; k < outputLayerWeights.size(); ++k) {
-                sum *= (outputLayerWeights.get(k) * errorSignal);
+                sum += (outputLayerWeights.get(k) * errorSignal);
             }
             double errorSignalOfNode = (target - predicted) * predicted * sum;
             for (int l = 0; l < hiddenLayerWeights.get(j).size(); ++l) {
