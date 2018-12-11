@@ -15,7 +15,7 @@ class NeuralNetwork {
         Random random = new Random();
         for (int i = 0; i < numberOfNeurons; ++i) {
             ArrayList<Double> hiddenLayerWeightsPerNeuron = new ArrayList<>();
-            for (int j = 0; j < numberOfNeurons; ++j) {
+            for (int j = 0; j < 81; ++j) {
                 double randomValue = random.nextDouble() * 2 - 1;
                 hiddenLayerWeightsPerNeuron.add(randomValue);
             }
@@ -29,7 +29,7 @@ class NeuralNetwork {
 
     private double Neuron(ArrayList<Double> inputs, ArrayList<Double> weights, double bias) {
         double sum = 0;
-        for (int i = 0; i < numberOfNeurons; ++i) {
+        for (int i = 0; i < inputs.size(); ++i) {
             double temp = inputs.get(i) * weights.get(i);
             sum += temp;
         }
@@ -57,7 +57,7 @@ class NeuralNetwork {
     }
 
     private static void BackPropagation(double target, double predicted) {
-        double learningRate = 0.05;
+        double learningRate = 0.000005;
         //Derivative of the activation function
         //double error = (target - predicted) * predicted * (1.0 - predicted);
         double error = target - predicted;
