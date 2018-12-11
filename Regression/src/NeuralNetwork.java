@@ -49,7 +49,7 @@ class NeuralNetwork {
         for (int i = 0; i < numberOfNeurons; ++i) {
             hiddenOutputs.add(SigmoidFunction(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
         }
-        return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
+        return ReLU(Neuron(hiddenOutputs, outputLayerWeights, 1.0));
     }
 
     private static double RootMeanSquaredError(double trueValue, double predictedValue) {
@@ -57,19 +57,21 @@ class NeuralNetwork {
     }
 
     private static void BackPropagation(double target, double predicted) {
-        double learningRate = 0.000005;
+        double learningRate = 0.0001;
         //Derivative of the activation function
         //double error = (target - predicted) * predicted * (1.0 - predicted);
         double error = target - predicted;
+        if (error <= 0) error = 0;
         for (int i = 0; i < outputLayerWeights.size(); ++i) {
             double changeInWeight = learningRate * error * hiddenOutputs.get(i);
             double changedWeight = outputLayerWeights.get(i) + changeInWeight;
             outputLayerWeights.set(i, changedWeight);
         }
+        double error2 = (target - predicted) * predicted * (1.0 - predicted);
         for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
             double sum = 0.0;
             for (Double weight : outputLayerWeights) {
-                sum += (weight * error);
+                sum += (weight * error2);
             }
             double delta = (target - predicted) * predicted * sum;
             for (int k = 0; k < hiddenLayerWeights.get(j).size(); ++k) {
