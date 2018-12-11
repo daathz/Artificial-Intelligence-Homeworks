@@ -52,14 +52,19 @@ class NeuralNetwork {
         return ReLU(Neuron(hiddenOutputs, outputLayerWeights, 1.0));
     }
 
-    private static double RootMeanSquaredError(double trueValue, double predictedValue) {
-        return Math.sqrt(0.5 * Math.pow((trueValue - predictedValue), 2));
+    static double RootMeanSquaredError(ArrayList<Double> trueValues, ArrayList<Double> predictedValues) {
+        double sum = 0.0;
+        for (int i = 0; i < trueValues.size(); ++i) {
+            sum += Math.pow(trueValues.get(i) - predictedValues.get(i), 2);
+        }
+        double res = sum * (1.0 / trueValues.size());
+        res = Math.sqrt(res);
+        return res;
     }
 
     private static void BackPropagation(double target, double predicted) {
         double learningRate = 0.0001;
         //Derivative of the activation function
-        //double error = (target - predicted) * predicted * (1.0 - predicted);
         double error = target - predicted;
         if (error <= 0) error = 0;
         for (int i = 0; i < outputLayerWeights.size(); ++i) {

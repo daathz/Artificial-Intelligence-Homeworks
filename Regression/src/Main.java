@@ -6,6 +6,7 @@ public class Main {
     static ArrayList<ArrayList<Double>> trainSet = new ArrayList<>();
     static ArrayList<Double> trainValues = new ArrayList<>();
     static ArrayList<ArrayList<Double>> testSet = new ArrayList<>();
+    static ArrayList<Double> testValues = new ArrayList<>();
 
     private static void readInput() {
         Scanner scanner = new Scanner(System.in);
@@ -29,6 +30,9 @@ public class Main {
                 record.add(Double.parseDouble(tempArray[m]));
             }
             testSet.add(record);
+        }
+        for (int m = 0; m < 4252; ++m) {
+            testValues.add(Double.parseDouble(scanner.nextLine()));
         }
     }
 
@@ -57,5 +61,6 @@ public class Main {
         for (double result : results) {
             System.out.println(result);
         }
+        System.out.println(NeuralNetwork.RootMeanSquaredError(testValues, results));
     }
 }
