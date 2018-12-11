@@ -3,6 +3,7 @@ import java.util.Random;
 
 class NeuralNetwork {
 
+    private static int numberOfNeurons;
     private static ArrayList<ArrayList<Double>> hiddenLayerWeights = new ArrayList<>();
     private static ArrayList<Double> outputLayerWeights = new ArrayList<>();
 
@@ -10,6 +11,7 @@ class NeuralNetwork {
     private static ArrayList<Double> hiddenOutputs;
 
     NeuralNetwork(int numberOfNeurons) {
+        NeuralNetwork.numberOfNeurons = numberOfNeurons;
         Random random = new Random();
         for (int i = 0; i < numberOfNeurons; ++i) {
             ArrayList<Double> hiddenLayerWeightsPerNeuron = new ArrayList<>();
@@ -26,14 +28,10 @@ class NeuralNetwork {
     }
 
     private double Neuron(ArrayList<Double> inputs, ArrayList<Double> weights, double bias) {
-        ArrayList<Double> additive = new ArrayList<>();
-        for (int i = 0; i < inputs.size(); ++i) {
-            double temp = inputs.get(i) * weights.get(i);
-            additive.add(temp);
-        }
         double sum = 0;
-        for (double added : additive) {
-            sum += added;
+        for (int i = 0; i < numberOfNeurons; ++i) {
+            double temp = inputs.get(i) * weights.get(i);
+            sum += temp;
         }
         return sum + bias;
     }
@@ -48,8 +46,8 @@ class NeuralNetwork {
 
     private double FeedForward(ArrayList<Double> inputs) {
         hiddenOutputs = new ArrayList<>();
-        for (int i = 0; i < inputs.size(); ++i) {
-            hiddenOutputs.add(ReLU(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
+        for (int i = 0; i < numberOfNeurons; ++i) {
+            hiddenOutputs.add(SigmoidFunction(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
         }
         return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
     }
@@ -59,43 +57,25 @@ class NeuralNetwork {
     }
 
     private static void BackPropagation(double target, double predicted) {
-        /*double learningRate = 0.1;
-        double diffOfVals = target - predicted;
-        double errorSignal = diffOfVals * predicted * (1.0 - predicted);
-        //Output Layer
+        double learningRate = 0.05;
+        //Derivative of the activation function
+        //double error = (target - predicted) * predicted * (1.0 - predicted);
+        double error = target - predicted;
         for (int i = 0; i < outputLayerWeights.size(); ++i) {
-            double changeInWeight = learningRate * errorSignal * hiddenOutputs.get(i);
-            outputLayerWeights.set(i, (outputLayerWeights.get(i) + changeInWeight));
-        }
-        //Hidden Layer
-        for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
-            double sum = 0.0;
-            for (int k = 0; k < outputLayerWeights.size(); ++k) {
-                sum += (outputLayerWeights.get(k) * errorSignal);
-            }
-            double errorSignalOfNode = (target - predicted) * predicted * sum;
-            for (int l = 0; l < hiddenLayerWeights.get(j).size(); ++l) {
-                double changeInWeight = learningRate * errorSignalOfNode * inputs.get(j).get(l);
-                hiddenLayerWeights.get(j)
-                        .set(l, (hiddenLayerWeights.get(j).get(l) + changeInWeight));
-            }
-        }*/
-        double learningRate = 0.1;
-        double errorSignal = RootMeanSquaredError(target, predicted);
-        for (int i = 0; i < outputLayerWeights.size(); ++i) {
-            double changeInWeight = learningRate * errorSignal * hiddenOutputs.get(i);
-            outputLayerWeights.set(i, (outputLayerWeights.get(i) + changeInWeight));
+            double changeInWeight = learningRate * error * hiddenOutputs.get(i);
+            double changedWeight = outputLayerWeights.get(i) + changeInWeight;
+            outputLayerWeights.set(i, changedWeight);
         }
         for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
             double sum = 0.0;
-            for (int k = 0; k < outputLayerWeights.size(); ++k) {
-                sum += (outputLayerWeights.get(k) * errorSignal);
+            for (Double weight : outputLayerWeights) {
+                sum += (weight * error);
             }
-            double errorSignalOfNode = (target - predicted) * predicted * sum;
-            for (int l = 0; l < hiddenLayerWeights.get(j).size(); ++l) {
-                double changeInWeight = learningRate * errorSignalOfNode * inputs.get(j).get(l);
-                hiddenLayerWeights.get(j)
-                        .set(l, (hiddenLayerWeights.get(j).get(l) + changeInWeight));
+            double delta = (target - predicted) * predicted * sum;
+            for (int k = 0; k < hiddenLayerWeights.get(j).size(); ++k) {
+                double changeInWeight = learningRate * delta * inputs.get(j).get(k);
+                double changedWeight = hiddenLayerWeights.get(j).get(k) + changeInWeight;
+                hiddenLayerWeights.get(j).set(k, changedWeight);
             }
         }
     }

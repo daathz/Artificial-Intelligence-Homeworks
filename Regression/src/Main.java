@@ -49,7 +49,7 @@ public class Main {
 
     public static void main(String[] args) {
         readInput();
-        NeuralNetwork neuralNetwork = new NeuralNetwork(81);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(8);
         normalize(trainSet);
         normalize(testSet);
         neuralNetwork.fit(trainSet, trainValues);
