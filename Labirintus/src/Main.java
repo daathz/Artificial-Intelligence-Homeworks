@@ -2,14 +2,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    static int[][] maze;
+    static int[][] matrix;
     static int numberOfItems;
     static int numberOfRows;
     static int numberOfColumns;
     static Node[][] graph;
 
 
-    public static void readLabyrinth() {
+    public static void readMaze() {
         Scanner scanner = new Scanner(System.in);
         ArrayList<String> temp = new ArrayList<>();
         while (true) {
@@ -25,11 +25,11 @@ public class Main {
         numberOfRows = temp.size() - 1;
         numberOfColumns = stemp.length;
         numberOfItems = Integer.parseInt(temp.get(temp.size() - 1));
-        maze = new int[numberOfRows][numberOfColumns];
+        matrix = new int[numberOfRows][numberOfColumns];
         for (int i = 0; i < temp.size() - 1; ++i) {
             stemp = temp.get(i).split(" ");
             for (int j = 0; j < stemp.length; ++j) {
-                maze[i][j] = Integer.parseInt(stemp[j]);
+                matrix[i][j] = Integer.parseInt(stemp[j]);
             }
         }
     }
@@ -38,7 +38,7 @@ public class Main {
         graph = new Node[numberOfRows][numberOfColumns];
         for (int i = 0; i < numberOfRows; ++i) {
             for (int j = 0; j < numberOfColumns; ++j) {
-                graph[i][j] = new Node(new Coordinate(i, j), maze[i][j]);
+                graph[i][j] = new Node(i, j, matrix[i][j]);
             }
         }
         for (int i = 0; i < numberOfRows; ++i) {
@@ -59,24 +59,8 @@ public class Main {
         }
     }
 
-    public static void BFS() {
-        int actualRow = 0;
-        int actualColumn = 0;
-        //TODO implement algorithm
-    }
-
     public static void main(String[] args) {
-        readLabyrinth();
+        readMaze();
         makeGraph();
-    }
-}
-
-class Coordinate {
-    public int row;
-    public int column;
-
-    public Coordinate(int r, int c) {
-        row = r;
-        column = c;
     }
 }

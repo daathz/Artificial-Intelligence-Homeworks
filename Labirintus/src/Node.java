@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 
-public class Node {
+class Node {
     static int idCounter = 0;
     int id;
-    Coordinate coordinate;
+    int x;
+    int y;
     boolean treasure = false;
     ArrayList<Node> adjacentNodes = new ArrayList<>();
 
@@ -12,10 +13,11 @@ public class Node {
     boolean eastWall = false;
     boolean southWall = false;
 
-    public Node(Coordinate coordinate, int value) {
+    Node(int x, int y, int value) {
         id = idCounter;
         idCounter++;
-        this.coordinate = coordinate;
+        this.x = x;
+        this.y = y;
 
         if ((value & 16) != 0) {
             treasure = true;
