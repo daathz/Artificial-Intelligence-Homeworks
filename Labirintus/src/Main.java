@@ -1,12 +1,12 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static int[][] matrix;
     static int numberOfItems;
     static int numberOfRows;
     static int numberOfColumns;
-    static Node[][] graph;
+    static Graph graph;
+    static ArrayList<Node> stopBys;
 
 
     public static void readMaze() {
@@ -35,32 +35,133 @@ public class Main {
     }
 
     public static void makeGraph() {
-        graph = new Node[numberOfRows][numberOfColumns];
+        graph = new Graph();
         for (int i = 0; i < numberOfRows; ++i) {
             for (int j = 0; j < numberOfColumns; ++j) {
-                graph[i][j] = new Node(i, j, matrix[i][j]);
+                graph.addNode(new Node(i, j, matrix[i][j]));
             }
         }
-        for (int i = 0; i < numberOfRows; ++i) {
-            for (int j = 0; j < numberOfColumns; ++j) {
-                if (!graph[i][j].westWall && j > 0) {
-                    graph[i][j].adjacentNodes.add(graph[i][j - 1]);
-                }
-                if (!graph[i][j].northWall && i > 0) {
-                    graph[i][j].adjacentNodes.add(graph[i - 1][j]);
-                }
-                if (!graph[i][j].eastWall && j < numberOfColumns - 1) {
-                    graph[i][j].adjacentNodes.add(graph[i][j + 1]);
-                }
-                if (!graph[i][j].southWall && i < numberOfRows - 1) {
-                    graph[i][j].adjacentNodes.add(graph[i + 1][j]);
-                }
+        for (Map.Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
+            if (!entry.getValue().westWall) {
+                entry.getValue().adjacentNodes.add(graph.getNodes().get(entry.getKey() - 1));
+            }
+            if (!entry.getValue().northWall && entry.getKey() != 0) {
+                entry.getValue().adjacentNodes.add(graph.getNodes().get(entry.getKey() - numberOfColumns));
+            }
+            if (!entry.getValue().eastWall) {
+                entry.getValue().adjacentNodes.add(graph.getNodes().get(entry.getKey() + 1));
+            }
+            if (!entry.getValue().southWall && entry.getKey() != graph.getNodes().size() - 1) {
+                entry.getValue().adjacentNodes.add(graph.getNodes().get(entry.getKey() + numberOfColumns));
             }
         }
+
+    }
+
+    public static void findStops() {
+        stopBys = new ArrayList<>();
+        stopBys.add(graph.getNodes().get(0));
+        for (Map.Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
+            if (entry.getValue().treasure && entry.getKey() != 0 && entry.getKey() != graph.getNodes().size()) {
+                stopBys.add(entry.getValue());
+            }
+        }
+        stopBys.add(graph.getNodes().get(graph.getNodes().size() - 1));
+    }
+
+    static LinkedList<Node> calculateShortestPath(Node source, Node destination) {
+        source.setDistance(0);
+        HashSet<Node> visitedNodes = new HashSet<>();
+        HashSet<Node> unvisitedNodes = new HashSet<>();
+        unvisitedNodes.add(source);
+        while (unvisitedNodes.size() != 0) {
+            Node current = getLowestDistanceNode(unvisitedNodes);
+            unvisitedNodes.remove(current);
+            for (Node adjacent : current.getAdjacentNodes()) {
+                if (!visitedNodes.contains(adjacent)) {
+                    if (adjacent == null) {
+                        System.err.println(current.id);
+                    }
+                    calculateMinimumDistance(adjacent, current);
+                    unvisitedNodes.add(adjacent);
+                }
+            }
+            visitedNodes.add(current);
+        }
+        return destination.getShortestPath();
+    }
+
+    static Node getLowestDistanceNode(HashSet<Node> unvisitedNodes) {
+        Node lowestDistanceNode = null;
+        int lowestDistance = Integer.MAX_VALUE;
+        for (Node node : unvisitedNodes) {
+            int nodeDistance = node.getDistance();
+            if (nodeDistance < lowestDistance) {
+                lowestDistance = nodeDistance;
+                lowestDistanceNode = node;
+            }
+        }
+        return lowestDistanceNode;
+    }
+
+    static void calculateMinimumDistance(Node evalNode, Node startNode) {
+        int startDistance = startNode.getDistance();
+        if (startDistance < evalNode.getDistance()) {
+            evalNode.setDistance(startDistance);
+            LinkedList<Node> shortestPath = new LinkedList<>(startNode.getShortestPath());
+            shortestPath.add(startNode);
+            evalNode.setShortestPath(shortestPath);
+        }
+    }
+
+    static LinkedList<Integer> findPath() {
+        LinkedList<Integer> path = new LinkedList<>();
+        for (int i = 1; i < stopBys.size(); ++i) {
+            LinkedList<Node> route = calculateShortestPath(stopBys.get(i - 1), stopBys.get(i));
+            while (!route.isEmpty()) {
+                path.add(route.poll().id);
+            }
+            resetDistances();
+        }
+        path.add(stopBys.get(stopBys.size() - 1).id);
+        return path;
+    }
+
+    static void resetDistances() {
+        for (Map.Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
+            entry.getValue().setDistance(Integer.MAX_VALUE);
+            entry.getValue().getShortestPath().clear();
+        }
+    }
+
+
+    static void walkTrough(LinkedList<Integer> path) {
+        int prevStep = 0;
+
+        if (graph.getNodes().get(0).treasure) {
+            System.out.println("felvesz");
+            graph.getNodes().get(0).treasure = false;
+        }
+
+        for (Integer i : path) {
+            if (prevStep != i) {
+                Node current = graph.getNodes().get(i);
+                System.out.println(current.x + " " + current.y);
+                if (current.treasure) {
+                    System.out.println("felvesz");
+                    current.treasure = false;
+                }
+            }
+            prevStep = i;
+        }
+        System.out.println("");
     }
 
     public static void main(String[] args) {
         readMaze();
         makeGraph();
+        findStops();
+        walkTrough(findPath());
+
     }
 }

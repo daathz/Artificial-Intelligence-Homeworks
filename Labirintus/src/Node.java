@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 class Node {
     static int idCounter = 0;
@@ -6,7 +6,12 @@ class Node {
     int x;
     int y;
     boolean treasure = false;
-    ArrayList<Node> adjacentNodes = new ArrayList<>();
+
+    LinkedList<Node> shortestPath = new LinkedList<>();
+
+    int distance;
+
+    LinkedList<Node> adjacentNodes = new LinkedList<>();
 
     boolean westWall = false;
     boolean northWall = false;
@@ -18,6 +23,7 @@ class Node {
         idCounter++;
         this.x = x;
         this.y = y;
+        distance = Integer.MAX_VALUE;
 
         if ((value & 16) != 0) {
             treasure = true;
@@ -34,5 +40,29 @@ class Node {
         if ((value & 8) != 0) {
             westWall = true;
         }
+    }
+
+    public void addNode(Node destination) {
+        adjacentNodes.add(destination);
+    }
+
+    public LinkedList<Node> getAdjacentNodes() {
+        return adjacentNodes;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public LinkedList<Node> getShortestPath() {
+        return shortestPath;
+    }
+
+    public void setShortestPath(LinkedList<Node> shortestPath) {
+        this.shortestPath = shortestPath;
     }
 }
