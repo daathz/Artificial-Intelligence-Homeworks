@@ -82,7 +82,7 @@ public class Main {
                     if (adjacent == null) {
                         System.err.println(current.id);
                     }
-                    calculateMinimumDistance(adjacent, current);
+                    calculateMinimumDistance(current, adjacent);
                     unvisitedNodes.add(adjacent);
                 }
             }
@@ -104,13 +104,13 @@ public class Main {
         return lowestDistanceNode;
     }
 
-    static void calculateMinimumDistance(Node evalNode, Node startNode) {
-        int startDistance = startNode.getDistance();
-        if (startDistance < evalNode.getDistance()) {
-            evalNode.setDistance(startDistance);
-            LinkedList<Node> shortestPath = new LinkedList<>(startNode.getShortestPath());
-            shortestPath.add(startNode);
-            evalNode.setShortestPath(shortestPath);
+    static void calculateMinimumDistance(Node source, Node destination) {
+        int startDistance = source.getDistance();
+        if (startDistance < destination.getDistance()) {
+            destination.setDistance(startDistance);
+            LinkedList<Node> shortestPath = new LinkedList<>(source.getShortestPath());
+            shortestPath.add(source);
+            destination.setShortestPath(shortestPath);
         }
     }
 
@@ -121,38 +121,27 @@ public class Main {
             while (!route.isEmpty()) {
                 path.add(route.poll().id);
             }
-            resetDistances();
+            for (Map.Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
+                entry.getValue().setDistance(Integer.MAX_VALUE);
+                entry.getValue().getShortestPath().clear();
+            }
         }
         path.add(stopBys.get(stopBys.size() - 1).id);
         return path;
     }
 
-    static void resetDistances() {
-        for (Map.Entry<Integer, Node> entry : graph.getNodes().entrySet()) {
-            entry.getValue().setDistance(Integer.MAX_VALUE);
-            entry.getValue().getShortestPath().clear();
-        }
-    }
-
-
     static void walkTrough(LinkedList<Integer> path) {
-        int prevStep = 0;
-
-        if (graph.getNodes().get(0).treasure) {
-            System.out.println("felvesz");
-            graph.getNodes().get(0).treasure = false;
-        }
-
-        for (Integer i : path) {
-            if (prevStep != i) {
-                Node current = graph.getNodes().get(i);
+        int previousStep = 0;
+        for (Integer step : path) {
+            if (previousStep != step) {
+                Node current = graph.getNodes().get(step);
                 System.out.println(current.x + " " + current.y);
                 if (current.treasure) {
                     System.out.println("felvesz");
                     current.treasure = false;
                 }
             }
-            prevStep = i;
+            previousStep = step;
         }
         System.out.println("");
     }

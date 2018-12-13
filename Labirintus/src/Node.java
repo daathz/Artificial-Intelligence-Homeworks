@@ -42,10 +42,6 @@ class Node {
         }
     }
 
-    public void addNode(Node destination) {
-        adjacentNodes.add(destination);
-    }
-
     public LinkedList<Node> getAdjacentNodes() {
         return adjacentNodes;
     }
