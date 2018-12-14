@@ -132,16 +132,16 @@ public class Main {
 
     static void walkTrough(LinkedList<Integer> path) {
         int previousStep = 0;
-        for (Integer step : path) {
-            if (previousStep != step) {
-                Node current = graph.getNodes().get(step);
+        for (int i = 0; i < path.size(); ++i) {
+            if (previousStep != path.get(i)) {
+                Node current = graph.getNodes().get(path.get(i));
                 System.out.println(current.x + " " + current.y);
                 if (current.treasure) {
                     System.out.println("felvesz");
                     current.treasure = false;
                 }
             }
-            previousStep = step;
+            previousStep = path.get(i);
         }
         System.out.println("");
     }
