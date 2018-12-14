@@ -61,6 +61,6 @@ public class Main {
         for (double result : results) {
             System.out.println(result);
         }
-        System.out.println(NeuralNetwork.RootMeanSquaredError(testValues, results));
+        System.out.println("RMSE: " + NeuralNetwork.RootMeanSquaredError(testValues, results));
     }
 }

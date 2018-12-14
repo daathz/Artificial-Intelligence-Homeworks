@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Random;
 
 class NeuralNetwork {
 
@@ -12,17 +11,16 @@ class NeuralNetwork {
 
     NeuralNetwork(int numberOfNeurons) {
         NeuralNetwork.numberOfNeurons = numberOfNeurons;
-        Random random = new Random();
         for (int i = 0; i < numberOfNeurons; ++i) {
             ArrayList<Double> hiddenLayerWeightsPerNeuron = new ArrayList<>();
             for (int j = 0; j < 81; ++j) {
-                double randomValue = random.nextDouble() * 2 - 1;
+                double randomValue = Math.random() * 2 - 1;
                 hiddenLayerWeightsPerNeuron.add(randomValue);
             }
             hiddenLayerWeights.add(hiddenLayerWeightsPerNeuron);
         }
         for (int k = 0; k < numberOfNeurons; ++k) {
-            double randomValue = random.nextDouble() * 2 - 1;
+            double randomValue = Math.random() * 2 - 1;
             outputLayerWeights.add(randomValue);
         }
     }
@@ -36,7 +34,7 @@ class NeuralNetwork {
         return sum + bias;
     }
 
-    private static double SigmoidFunction(double input) {
+    private static double Sigmoid(double input) {
         return (1.0 / (1 + Math.exp(-input)));
     }
 
@@ -47,9 +45,9 @@ class NeuralNetwork {
     private double FeedForward(ArrayList<Double> inputs) {
         hiddenOutputs = new ArrayList<>();
         for (int i = 0; i < numberOfNeurons; ++i) {
-            hiddenOutputs.add(SigmoidFunction(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
+            hiddenOutputs.add(Sigmoid(Neuron(inputs, hiddenLayerWeights.get(i), 1.0)));
         }
-        return ReLU(Neuron(hiddenOutputs, outputLayerWeights, 1.0));
+        return Neuron(hiddenOutputs, outputLayerWeights, 1.0);
     }
 
     static double RootMeanSquaredError(ArrayList<Double> trueValues, ArrayList<Double> predictedValues) {
@@ -63,35 +61,46 @@ class NeuralNetwork {
     }
 
     private static void BackPropagation(double target, double predicted) {
-        double learningRate = 0.0001;
-        //Derivative of the activation function
-        double error = target - predicted;
-        if (error <= 0) error = 0;
-        for (int i = 0; i < outputLayerWeights.size(); ++i) {
-            double changeInWeight = learningRate * error * hiddenOutputs.get(i);
-            double changedWeight = outputLayerWeights.get(i) + changeInWeight;
-            outputLayerWeights.set(i, changedWeight);
-        }
-        double error2 = (target - predicted) * predicted * (1.0 - predicted);
-        for (int j = 0; j < hiddenLayerWeights.size(); ++j) {
+        double momentum = 0.0002;
+        double learningRate = 0.00002;
+        double outputError = target - predicted;
+        //double errorSignal = (target - predicted) * predicted * (1 - predicted);
+        ArrayList<Double> hiddenErrors = new ArrayList<>();
+        for (int i = 0; i < hiddenLayerWeights.size(); ++i) {
             double sum = 0.0;
-            for (Double weight : outputLayerWeights) {
-                sum += (weight * error2);
+            for (double weight : hiddenLayerWeights.get(i)) {
+                sum += weight * outputError;
             }
-            double delta = (target - predicted) * predicted * sum;
-            for (int k = 0; k < hiddenLayerWeights.get(j).size(); ++k) {
-                double changeInWeight = learningRate * delta * inputs.get(j).get(k);
-                double changedWeight = hiddenLayerWeights.get(j).get(k) + changeInWeight;
-                hiddenLayerWeights.get(j).set(k, changedWeight);
+            double hiddenError = hiddenOutputs.get(i) * (1 - hiddenOutputs.get(i)) * sum;
+            hiddenErrors.add(hiddenError);
+        }
+        double previousWeight = 1.0;
+        for (int j = 0; j < outputLayerWeights.size(); ++j) {
+            double weightDiff = (learningRate * outputError * hiddenOutputs.get(j) + previousWeight * momentum);
+            double changedWeight = outputLayerWeights.get(j) + weightDiff;
+            previousWeight = weightDiff;
+            outputLayerWeights.set(j, changedWeight);
+        }
+        previousWeight = 1.0;
+        for (int k = 0; k < hiddenLayerWeights.size(); ++k) {
+            for (int l = 0; l < hiddenLayerWeights.get(k).size(); ++l) {
+                double weightDiff = (learningRate * inputs.get(k).get(l) * hiddenErrors.get(k)) + (previousWeight * momentum);
+                double changedWeight = hiddenLayerWeights.get(k).get(l) + weightDiff;
+                previousWeight = weightDiff;
+                hiddenLayerWeights.get(k).set(l, changedWeight);
             }
         }
     }
 
     void fit(ArrayList<ArrayList<Double>> inputs, ArrayList<Double> target) {
         NeuralNetwork.inputs = inputs;
-        for (int i = 0; i < inputs.size(); ++i) {
-            double predicted = FeedForward(inputs.get(i));
-            BackPropagation(target.get(i), predicted);
+        ArrayList<Double> predictedValues = new ArrayList<>();
+        for (int j = 0; j < 7; ++j){
+            for (int i = 0; i < inputs.size(); ++i) {
+                double predicted = FeedForward(inputs.get(i));
+                predictedValues.add(predicted);
+                BackPropagation(target.get(i), predicted);
+            }
         }
     }
 
